@@ -12,6 +12,7 @@ public class EnemyController : MonoBehaviour {
 
     public SpikeAudioClips audioClips;
 
+    public GameObject deathParticleEmitter;
     public ChunkController enemyChunk;
     public float health;
 
@@ -49,6 +50,9 @@ public class EnemyController : MonoBehaviour {
     private void Die() {
         gameObject.SetActive(false);
         PlayClipAt(audioClips.deadClip, (Vector2) transform.position, audioSource.volume);
+        Instantiate(deathParticleEmitter, transform.position, transform.rotation);
+
+        AchievementManager.instance.AddKill();
 
         for (int i = 0; i < enemyChunk.sprites.Length; i++) {
             ChunkController chunk = (ChunkController) Instantiate(enemyChunk, transform.position, Quaternion.identity);

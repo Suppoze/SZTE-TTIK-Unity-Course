@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using Assets.Core;
 
 public class GameController : MonoBehaviour {
 
@@ -13,6 +14,10 @@ public class GameController : MonoBehaviour {
 
     private void Awake() {
         respawnController = GetComponent<RespawnController>();
+    }
+
+    private void Start() {
+        AchievementManager.instance.Unlock(Achievements.FIRST_GAME);
     }
 
     private void Update () {
@@ -31,7 +36,7 @@ public class GameController : MonoBehaviour {
 
     private void OnEscapePressed() {
         if (Input.GetButtonDown("Cancel")) {
-            UnityEditor.EditorApplication.isPlaying = false;
+            Application.LoadLevel("Menu");
         }
     }
 

@@ -70,7 +70,8 @@ public class PlayerController : MonoBehaviour {
 
     private void Die() {
         CameraController.instance.shake(0.3f, 0.3f, 1f);
-        AudioSource.PlayClipAtPoint(audioClips.deadClip, transform.position);
+        AudioSource.PlayClipAtPoint(audioClips.deadClip, transform.position, audioSource.volume);
+        AchievementManager.instance.AddDeath();
         gameController.OnPlayerDead();
     }
 }
