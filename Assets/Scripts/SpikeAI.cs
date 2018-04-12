@@ -1,36 +1,35 @@
 using UnityEngine;
-using System.Collections;
-using System;
 
-public class SpikeAI : MonoBehaviour {
+public class SpikeAI : MonoBehaviour
+{
+    public float SearchInterval;
 
-    public float searchInterval;
+    private Mover _mover;
+    private Rigidbody2D _myRigidbody;
+    private Transform _player;
 
-    private Transform player;
-    private Rigidbody2D myRigidbody;
-    private Mover mover;
-
-    private void Awake() {
-        myRigidbody = GetComponent<Rigidbody2D>();
-        mover = GetComponent<Mover>();
+    private void Awake()
+    {
+        _myRigidbody = GetComponent<Rigidbody2D>();
+        _mover = GetComponent<Mover>();
     }
 
-    private void Start() {
-        InvokeRepeating("FindPlayer", searchInterval, searchInterval);
+    private void Start()
+    {
+        InvokeRepeating("FindPlayer", SearchInterval, SearchInterval);
     }
 
-	void FixedUpdate () {
-        if (player != null) {
-            Vector2 playerDirection = player.position - transform.position;
-            mover.Move(playerDirection);
-        }
+    private void FixedUpdate()
+    {
+        if (_player == null) return;
+
+        Vector2 playerDirection = _player.position - transform.position;
+        _mover.Move(playerDirection);
     }
 
-    private void FindPlayer() {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        if (player != null) {
-            CancelInvoke("FindPlayer");
-        }
+    private void FindPlayer()
+    {
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        if (_player != null) CancelInvoke("FindPlayer");
     }
-	
 }

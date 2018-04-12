@@ -1,10 +1,14 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ScreenManager : MonoBehaviour {
+public class ScreenManager : MonoBehaviour
+{
+    //Animator State and Transition names we need to check against.
+    private const string k_OpenTransitionName = "Open";
+
+    private const string k_ClosedStateName = "Closed";
 
     //Screen to open automatically at the start of the Scene
     public Animator initiallyOpen;
@@ -19,11 +23,8 @@ public class ScreenManager : MonoBehaviour {
     //Used when closing a Screen, so we can go back to the button that opened it.
     private GameObject m_PreviouslySelected;
 
-    //Animator State and Transition names we need to check against.
-    const string k_OpenTransitionName = "Open";
-    const string k_ClosedStateName = "Closed";
-
-    public void OnEnable() {
+    public void OnEnable()
+    {
         //We cache the Hash to the "Open" Parameter, so we can feed to Animator.SetBool.
         m_OpenParameterId = Animator.StringToHash(k_OpenTransitionName);
 
@@ -35,7 +36,8 @@ public class ScreenManager : MonoBehaviour {
 
     //Closes the currently open panel and opens the provided one.
     //It also takes care of handling the navigation, setting the new Selected element.
-    public void OpenPanel(Animator anim) {
+    public void OpenPanel(Animator anim)
+    {
         if (m_Open == anim)
             return;
 
@@ -56,27 +58,29 @@ public class ScreenManager : MonoBehaviour {
         m_Open.SetBool(m_OpenParameterId, true);
 
         //Set an element in the new screen as the new Selected one.
-        GameObject go = FindFirstEnabledSelectable(anim.gameObject);
+        var go = FindFirstEnabledSelectable(anim.gameObject);
         SetSelected(go);
     }
 
     //Finds the first Selectable element in the providade hierarchy.
-    static GameObject FindFirstEnabledSelectable(GameObject gameObject) {
+    private static GameObject FindFirstEnabledSelectable(GameObject gameObject)
+    {
         GameObject go = null;
         var selectables = gameObject.GetComponentsInChildren<Selectable>(true);
-        foreach (var selectable in selectables) {
-            if (selectable.IsActive() && selectable.IsInteractable()) {
+        foreach (var selectable in selectables)
+            if (selectable.IsActive() && selectable.IsInteractable())
+            {
                 go = selectable.gameObject;
                 break;
             }
-        }
         return go;
     }
 
     //Closes the currently open Screen
     //It also takes care of navigation.
     //Reverting selection to the Selectable used before opening the current screen.
-    public void CloseCurrent() {
+    public void CloseCurrent()
+    {
         if (m_Open == null)
             return;
 
@@ -93,10 +97,12 @@ public class ScreenManager : MonoBehaviour {
 
     //Coroutine that will detect when the Closing animation is finished and it will deactivate the
     //hierarchy.
-    IEnumerator DisablePanelDeleyed(Animator anim) {
-        bool closedStateReached = false;
-        bool wantToClose = true;
-        while (!closedStateReached && wantToClose) {
+    private IEnumerator DisablePanelDeleyed(Animator anim)
+    {
+        var closedStateReached = false;
+        var wantToClose = true;
+        while (!closedStateReached && wantToClose)
+        {
             if (!anim.IsInTransition(0))
                 closedStateReached = anim.GetCurrentAnimatorStateInfo(0).IsName(k_ClosedStateName);
 
@@ -112,7 +118,8 @@ public class ScreenManager : MonoBehaviour {
     //Make the provided GameObject selected
     //When using the mouse/touch we actually want to set it as the previously selected and 
     //set nothing as selected for now.
-    private void SetSelected(GameObject go) {
+    private void SetSelected(GameObject go)
+    {
         //Select the GameObject.
         EventSystem.current.SetSelectedGameObject(go);
 

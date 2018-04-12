@@ -1,20 +1,22 @@
 using UnityEngine;
 
-public class Crosshair : MonoBehaviour {
+public class Crosshair : MonoBehaviour
+{
+    public static Crosshair Instance;
 
-    public static Crosshair instance;
-
-    private void Awake() {
-        instance = this;
+    private void Awake()
+    {
+        Instance = this;
     }
 
-    private void Update () {
+    private void Update()
+    {
         Cursor.visible = false;
-        positionCrosshair();
+        PositionCrosshair();
     }
 
-    private void positionCrosshair() {
+    private void PositionCrosshair()
+    {
         transform.position = (Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
-
 }

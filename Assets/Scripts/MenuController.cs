@@ -1,40 +1,50 @@
+using Assets.Scripts.Achievements;
+using UnityEditor;
 using UnityEngine;
-using System.Collections;
+using UnityEngine.SceneManagement;
 
-public class MenuController : MonoBehaviour {
+public class MenuController : MonoBehaviour
+{
+    private const int MainMenuConst = 0;
+    private const int Achievements = 1;
 
-    private const int MAIN_MENU = 0;
-    private const int ACHIEVEMENTS = 1;
+    public Animator MainMenu;
 
-    public Animator mainMenu;
+    private ScreenManager _screenManager;
 
-    private ScreenManager screenManager;
-
-    private void Awake() {
-        screenManager = GetComponent<ScreenManager>();
+    private void Awake()
+    {
+        _screenManager = GetComponent<ScreenManager>();
     }
 
-    private void Update() {
+    private void Update()
+    {
         OnEscapePressed();
     }
 
-    private void OnEscapePressed() {
-        if (Input.GetButtonDown("Cancel")) {
-            screenManager.OpenPanel(mainMenu);
-        }
+    private void OnEscapePressed()
+    {
+        if (Input.GetButtonDown("Cancel")) _screenManager.OpenPanel(MainMenu);
     }
 
-    public void OnPlayClicked() {
-        Application.LoadLevel("Level");
+    public void OnPlayClicked()
+    {
+        SceneManager.LoadScene("Level");
         Debug.Log("Clicked Play");
     }
 
-    public void OnExitClicked() {
+    public void OnExitClicked()
+    {
         Debug.Log("Clicked Exit");
-        if (Application.isEditor) {
-            UnityEditor.EditorApplication.isPlaying = false;
-            AchievementManager.instance.ResetAchievments();
-        } else {
+        if (Application.isEditor)
+        {
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#endif
+            AchievementManager.Instance.ResetAchievments();
+        }
+        else
+        {
             Application.Quit();
         }
     }

@@ -1,65 +1,62 @@
 using UnityEngine;
-using System.Collections;
 
 [RequireComponent(typeof(SpriteRenderer))]
+public class Tiling : MonoBehaviour
+{
+    public ParallaxBackground ParallaxBackground;
+    public bool HasALeftBuddy;
+    public bool HasARightBuddy;
+    public bool ReverseScale = false;
+    public int OffsetX = 2;
 
-public class Tiling : MonoBehaviour {
+    private const int Left = -1;
+    private const int Right = 1;
 
-    private const int LEFT = -1;
-    private const int RIGHT = 1;
+    private Camera _mainCamera;
+    private float _spriteWidth;
 
-    public ParallaxBackground parallaxBackground;
-
-    public int offsetX = 2;
-
-    public bool hasARightBuddy = false;
-    public bool hasALeftBuddy = false;
-
-    public bool reverseScale = false;
-
-    private float spriteWidth = 0f;
-
-    private Camera mainCamera;
-    
-    void Awake() {
-        mainCamera = Camera.main;
+    private void Awake()
+    {
+        _mainCamera = Camera.main;
     }
 
-    void Start() {
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteWidth = spriteRenderer.sprite.bounds.size.x;
+    private void Start()
+    {
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteWidth = spriteRenderer.sprite.bounds.size.x;
     }
 
-    void Update() {
-        if (!hasALeftBuddy || !hasARightBuddy) {
-            float camHorizontalExtend = mainCamera.orthographicSize * Screen.width / Screen.height;
+    private void Update()
+    {
+        if (HasALeftBuddy && HasARightBuddy) return;
 
-            float edgeVisiblePositionRight = (transform.position.x + spriteWidth / 2) - camHorizontalExtend;
-            float edgeVisiblePositionLeft = (transform.position.x - spriteWidth / 2) + camHorizontalExtend;
+        var camHorizontalExtend = _mainCamera.orthographicSize * Screen.width / Screen.height;
+        var edgeVisiblePositionRight = transform.position.x + _spriteWidth / 2 - camHorizontalExtend;
+        var edgeVisiblePositionLeft = transform.position.x - _spriteWidth / 2 + camHorizontalExtend;
 
-            if (mainCamera.transform.position.x >= edgeVisiblePositionRight - offsetX && !hasARightBuddy) {
-                makeNewBuddy(RIGHT);
-                hasARightBuddy = true;
-            } else if (mainCamera.transform.position.x <= edgeVisiblePositionLeft + offsetX && !hasALeftBuddy) {
-                makeNewBuddy(LEFT);
-                hasALeftBuddy = true;
-            }
+        if (_mainCamera.transform.position.x >= edgeVisiblePositionRight - OffsetX && !HasARightBuddy)
+        {
+            MakeNewBuddy(Right);
+            HasARightBuddy = true;
+        }
+        else if (_mainCamera.transform.position.x <= edgeVisiblePositionLeft + OffsetX && !HasALeftBuddy)
+        {
+            MakeNewBuddy(Left);
+            HasALeftBuddy = true;
         }
     }
 
-    void makeNewBuddy(int rightOrLeft) {
-        Vector3 newPosition = new Vector3(transform.position.x + spriteWidth * rightOrLeft, transform.position.y, transform.position.z);
-        Transform newBuddy = Instantiate(transform, newPosition, transform.rotation) as Transform;
+    private void MakeNewBuddy(int rightOrLeft)
+    {
+        var newPosition = new Vector3(transform.position.x + _spriteWidth * rightOrLeft, transform.position.y,
+            transform.position.z);
+        var newBuddy = Instantiate(transform, newPosition, transform.rotation);
 
-        if (reverseScale == true) {
+        if (ReverseScale)
             newBuddy.localScale = new Vector3(newBuddy.localScale.x * -1, newBuddy.localScale.y, newBuddy.localScale.z);
-        }
 
         newBuddy.parent = transform.parent;
-        if (rightOrLeft > 0) {
-            newBuddy.GetComponent<Tiling>().hasALeftBuddy = true;
-        } else {
-            newBuddy.GetComponent<Tiling>().hasARightBuddy = true;
-        }
+        if (rightOrLeft > 0) newBuddy.GetComponent<Tiling>().HasALeftBuddy = true;
+        else newBuddy.GetComponent<Tiling>().HasARightBuddy = true;
     }
 }

@@ -1,18 +1,19 @@
 using UnityEngine;
-using System.Collections;
 
-public class RespawnableObject : MonoBehaviour {
+public class RespawnableObject : MonoBehaviour
+{
+    public Transform RespawnPoint;
+    public float RespawnDelay;
 
-    public Transform respawnPoint;
-    public float respawnDelay;
-
-    public void Respawn() {
+    public void Respawn()
+    {
         gameObject.SetActive(false);
-        Invoke("Reactivate", respawnDelay);
+        Invoke("Reactivate", RespawnDelay);
     }
 
-    private void Reactivate() {
-        gameObject.transform.position = respawnPoint.position;
+    private void Reactivate()
+    {
+        gameObject.transform.position = RespawnPoint.position;
         gameObject.SetActive(true);
     }
 }

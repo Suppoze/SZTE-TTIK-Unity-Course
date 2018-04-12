@@ -1,13 +1,11 @@
 using UnityEngine;
-using System.Collections;
 
-public class RespawnController : MonoBehaviour {
+public class RespawnController : MonoBehaviour
+{
+    public RespawnableObject[] RespawnableObjects;
 
-    public RespawnableObject[] respawnableObjects;
-
-    public void ResetGame() {
-        foreach (RespawnableObject respawnableObject in respawnableObjects) {
-            respawnableObject.Respawn();
-        }
+    public void ResetGame()
+    {
+        foreach (var respawnableObject in RespawnableObjects) respawnableObject.Respawn();
     }
 }

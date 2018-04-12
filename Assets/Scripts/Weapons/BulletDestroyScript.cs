@@ -1,19 +1,21 @@
 using UnityEngine;
-using System.Collections;
 
-public class BulletDestroyScript : MonoBehaviour {
+public class BulletDestroyScript : MonoBehaviour
+{
+    public float LifeSpanInSeconds;
 
-    public float lifeSpanInSeconds;
-
-    private void OnEnable() {
-        Invoke("Destroy", lifeSpanInSeconds);
+    private void OnEnable()
+    {
+        Invoke("Destroy", LifeSpanInSeconds);
     }
 
-    private void Destroy() {
+    private void Destroy()
+    {
         gameObject.SetActive(false);
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         CancelInvoke();
     }
 }

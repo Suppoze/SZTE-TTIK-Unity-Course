@@ -1,73 +1,81 @@
-using UnityEngine;
-using System.Collections;
 using System;
+using Assets.Scripts.Achievements;
+using UnityEngine;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : MonoBehaviour
+{
+    public SpikeAudioClips AudioClips;
+    public GameObject DeathParticleEmitter;
+    public ChunkController EnemyChunk;
+    public float Health;
 
-    [Serializable]
-    public class SpikeAudioClips {
-        public AudioClip hurtclip;
-        public AudioClip deadClip;
+    private Animator _animator;
+    private AudioSource _audioSource;
+    private PolygonCollider2D _enemyCollider;
+    private Rigidbody2D _enemyRigidbody;
+    private SpriteRenderer _spriteRenderer;
+
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
+        _enemyRigidbody = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _enemyCollider = GetComponent<PolygonCollider2D>();
     }
 
-    public SpikeAudioClips audioClips;
-
-    public GameObject deathParticleEmitter;
-    public ChunkController enemyChunk;
-    public float health;
-
-    private Animator animator;
-    private AudioSource audioSource;
-    private Rigidbody2D enemyRigidbody;
-    private SpriteRenderer spriteRenderer;
-    private PolygonCollider2D enemyCollider;
-
-    private void Awake() {
-        animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
-        enemyRigidbody = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        enemyCollider = GetComponent<PolygonCollider2D>();
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Damaging")) {
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Damaging"))
             Hurt(collision.gameObject.GetComponent<Damager>());
-        }
     }
 
-    public void Hurt(Damager damager) {
-        health -= damager.damage;
+    public void Hurt(Damager damager)
+    {
+        Health -= damager.Damage;
 
-        if (health > 0f) {
-            animator.SetTrigger("Hurt");
-            audioSource.PlayOneShot(audioClips.hurtclip);
-        } else {
+        if (Health > 0f)
+        {
+            _animator.SetTrigger("Hurt");
+            _audioSource.PlayOneShot(AudioClips.Hurtclip);
+        }
+        else
+        {
             Die();
         }
     }
 
-    private void Die() {
+    private void Die()
+    {
         gameObject.SetActive(false);
-        PlayClipAt(audioClips.deadClip, (Vector2) transform.position, audioSource.volume);
-        Instantiate(deathParticleEmitter, transform.position, transform.rotation);
+        PlayClipAt(AudioClips.DeadClip, (Vector2) transform.position, _audioSource.volume);
+        Instantiate(DeathParticleEmitter, transform.position, transform.rotation);
 
-        AchievementManager.instance.AddKill();
+        AchievementManager.Instance.AddKill();
 
-        for (int i = 0; i < enemyChunk.sprites.Length; i++) {
-            ChunkController chunk = (ChunkController) Instantiate(enemyChunk, transform.position, Quaternion.identity);
+        for (var i = 0; i < EnemyChunk.Sprites.Length; i++)
+        {
+            var chunk = Instantiate(EnemyChunk, transform.position, Quaternion.identity);
             chunk.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, -(i * 90f)));
             chunk.RenderSprite(i);
         }
     }
 
-    private void PlayClipAt(AudioClip clip, Vector3 pos, float volume) {
-        GameObject tempGO = new GameObject("TempAudio");
-        tempGO.transform.position = pos;
-        AudioSource aSource = tempGO.AddComponent<AudioSource>();
+    private void PlayClipAt(AudioClip clip, Vector3 pos, float volume)
+    {
+        var tempGo = new GameObject("TempAudio");
+        tempGo.transform.position = pos;
+        var aSource = tempGo.AddComponent<AudioSource>();
         aSource.clip = clip;
         aSource.volume = volume;
         aSource.Play();
-        Destroy(tempGO, clip.length);
+        Destroy(tempGo, clip.length);
+    }
+
+    [Serializable]
+    public class SpikeAudioClips
+    {
+        public AudioClip DeadClip;
+        public AudioClip Hurtclip;
     }
 }

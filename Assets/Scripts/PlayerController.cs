@@ -1,77 +1,82 @@
-using UnityEngine;
-using System.Collections;
 using System;
+using Assets.Scripts.Achievements;
+using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
+    public PlayerAudioClips AudioClips;
+    public GameController GameController;
+    public float Health;
+    public float InvincibilityTime;
+    public float MaxSpeed;
 
-    [Serializable]
-    public class PlayerAudioClips {
-        public AudioClip spawnClip;
-        public AudioClip hurtClip;
-        public AudioClip deadClip;
+    private AudioSource _audioSource;
+    private Mover _mover;
+    private Rigidbody2D _myRigidBody;
+    private float _currentHealth;
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+        _myRigidBody = GetComponent<Rigidbody2D>();
+        _mover = GetComponent<Mover>();
     }
 
-    public float maxSpeed;
-    public float health;
-    public float invincibilityTime;
-
-    public GameController gameController;
-    public PlayerAudioClips audioClips;
-
-    private AudioSource audioSource;
-    private Rigidbody2D myRigidBody;
-    private Mover mover;
-
-    private float currentHealth;
-
-    private void Awake() {
-        audioSource = GetComponent<AudioSource>();
-        myRigidBody = GetComponent<Rigidbody2D>();
-        mover = GetComponent<Mover>();
+    private void OnEnable()
+    {
+        _currentHealth = Health;
     }
 
-    private void OnEnable() {
-        currentHealth = health;
+    private void Start()
+    {
+        _audioSource.PlayOneShot(AudioClips.spawnClip);
     }
 
-    private void Start() {
-        audioSource.PlayOneShot(audioClips.spawnClip);
+    private void FixedUpdate()
+    {
+        var moveHorizontal = Input.GetAxisRaw("Horizontal");
+        var moveVertical = Input.GetAxisRaw("Vertical");
+        var movementDirection = new Vector2(moveHorizontal, moveVertical);
+        _mover.Move(movementDirection);
     }
 
-    private void FixedUpdate() {
-        float moveHorizontal = Input.GetAxisRaw("Horizontal");
-        float moveVertical = Input.GetAxisRaw("Vertical");
-        Vector2 movementDirection = new Vector2(moveHorizontal, moveVertical);
-        mover.Move(movementDirection);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision) {
-        GameObject other = collision.gameObject;
-        if (other.layer == LayerMask.NameToLayer("Enemy")) {
-            float damage = other.GetComponent<Damager>().damage;
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        var other = collision.gameObject;
+        if (other.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            var damage = other.GetComponent<Damager>().Damage;
             OnEnemyCollision(damage);
         }
     }
 
-    private void OnEnemyCollision(float damage) {
-        currentHealth -= damage;
-        if (currentHealth > 0f) {
-            Hurt();
-        } else {
-            Die();
-        }
+    private void OnEnemyCollision(float damage)
+    {
+        _currentHealth -= damage;
+        if (_currentHealth > 0f) Hurt();
+        else Die();
     }
 
-    private void Hurt() {
-        CameraController.instance.shake(0.2f, 0.2f, 1f);
-        audioSource.PlayOneShot(audioClips.hurtClip);
-        gameController.OnPlayerHurt();
+    private void Hurt()
+    {
+        CameraController.Instance.Shake(0.2f, 0.2f, 1f);
+        _audioSource.PlayOneShot(AudioClips.hurtClip);
+        GameController.OnPlayerHurt();
     }
 
-    private void Die() {
-        CameraController.instance.shake(0.3f, 0.3f, 1f);
-        AudioSource.PlayClipAtPoint(audioClips.deadClip, transform.position, audioSource.volume);
-        AchievementManager.instance.AddDeath();
-        gameController.OnPlayerDead();
+    private void Die()
+    {
+        CameraController.Instance.Shake(0.3f, 0.3f, 1f);
+        AudioSource.PlayClipAtPoint(AudioClips.deadClip, transform.position, _audioSource.volume);
+        AchievementManager.Instance.AddDeath();
+        GameController.OnPlayerDead();
+    }
+
+    [Serializable]
+    public class PlayerAudioClips
+    {
+        public AudioClip deadClip;
+        public AudioClip hurtClip;
+        public AudioClip spawnClip;
     }
 }

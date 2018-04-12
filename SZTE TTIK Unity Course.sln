@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SZTE TTIK Unity Course.CSharp", "SZTE TTIK Unity Course.CSharp.csproj", "{88651E5D-D58C-E426-D300-E820065E281F}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SZTE TTIK Unity Course", "Assembly-CSharp.csproj", "{BB5AD331-87F8-C46B-61B3-9D136FA984FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{88651E5D-D58C-E426-D300-E820065E281F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88651E5D-D58C-E426-D300-E820065E281F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88651E5D-D58C-E426-D300-E820065E281F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88651E5D-D58C-E426-D300-E820065E281F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB5AD331-87F8-C46B-61B3-9D136FA984FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB5AD331-87F8-C46B-61B3-9D136FA984FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB5AD331-87F8-C46B-61B3-9D136FA984FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB5AD331-87F8-C46B-61B3-9D136FA984FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

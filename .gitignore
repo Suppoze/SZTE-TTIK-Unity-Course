@@ -1,1 +1,6 @@
 Library/
+Temp/
+Executable/
+.vs/
+obj/
+ProjectSettings/

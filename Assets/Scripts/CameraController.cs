@@ -1,55 +1,57 @@
 using UnityEngine;
-using System.Collections;
 
-public class CameraController : MonoBehaviour {
+public class CameraController : MonoBehaviour
+{
+    public static CameraController Instance;
+    public Transform Crosshair;
+    public Transform Player;
+    public float Fov = 0.5f;
 
-    public static CameraController instance;
+    private Vector3 _originalPos;
+    private float _shakeAmount;
+    private float _shakeDecreaseFactor;
+    private float _shakeDuration;
 
-    public float fov = 0.5f;
-
-    public Transform crosshair;
-    public Transform player;
-
-    private float shakeDuration;
-    private float shakeAmount;
-    private float shakeDecreaseFactor;
-
-    private Vector3 originalPos;
-
-    void Awake() {
-        instance = this;
+    private void Awake()
+    {
+        Instance = this;
     }
 
-    void OnEnable() {
-        originalPos = transform.position;
+    private void OnEnable()
+    {
+        _originalPos = transform.position;
     }
 
-    private void Update() {
-        transform.position = addShake(calculateCenterWithFov());
+    private void Update()
+    {
+        transform.position = AddShake(CalculateCenterWithFov());
     }
 
-    private Vector3 calculateCenterWithFov() {
+    private Vector3 CalculateCenterWithFov()
+    {
         return new Vector3(
-                    (fov * player.position.x + (1 - fov) * crosshair.position.x),
-                    (fov * player.position.y + (1 - fov) * crosshair.position.y),
-                    transform.position.z);
+            Fov * Player.position.x + (1 - Fov) * Crosshair.position.x,
+            Fov * Player.position.y + (1 - Fov) * Crosshair.position.y,
+            transform.position.z);
     }
 
-    private Vector3 addShake(Vector3 centeredPosition) {
-        if (shakeDuration > 0f) {
-            shakeDuration -= Time.deltaTime * shakeDecreaseFactor;
-            return centeredPosition + Random.insideUnitSphere * shakeAmount;
-        } else {
-            shakeDuration = 0f;
-            return centeredPosition;
+    private Vector3 AddShake(Vector3 centeredPosition)
+    {
+        if (_shakeDuration > 0f)
+        {
+            _shakeDuration -= Time.deltaTime * _shakeDecreaseFactor;
+            return centeredPosition + Random.insideUnitSphere * _shakeAmount;
         }
+        _shakeDuration = 0f;
+        return centeredPosition;
     }
 
-    public void shake(float shakeDuration = .1f, float shakeAmount = .1f, float shakeDecreaseFactor = 1f) {
-        this.shakeDuration = shakeDuration;
-        this.shakeAmount = shakeAmount;
-        this.shakeDecreaseFactor = shakeDecreaseFactor;
+    public void Shake(float shakeDuration = .1f, float shakeAmount = .1f, float shakeDecreaseFactor = 1f)
+    {
+        this._shakeDuration = shakeDuration;
+        this._shakeAmount = shakeAmount;
+        this._shakeDecreaseFactor = shakeDecreaseFactor;
 
-        originalPos = transform.position;
+        _originalPos = transform.position;
     }
 }
